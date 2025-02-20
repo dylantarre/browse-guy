@@ -98,6 +98,11 @@ COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 # Add dbus service to supervisord config
 RUN echo "[program:dbus]\ncommand=/usr/bin/dbus-daemon --system --nofork\nautorestart=true\npriority=1\nstartretries=3\nstartsecs=3" >> /etc/supervisor/conf.d/supervisord.conf
 
+# Add cleanup script
+RUN echo '#!/bin/bash\npkill -9 -f chrome || true\nrm -rf /tmp/chrome*\nrm -rf ~/.config/chromium\nrm -rf ~/.cache/chromium\nrm -f /tmp/.X*-lock\nrm -f /tmp/.X11-unix/X*' > /usr/local/bin/cleanup-chrome && \
+    chmod +x /usr/local/bin/cleanup-chrome
+
 EXPOSE 7789 6081 5902 9223
 
-CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
+# Run cleanup on container start
+ENTRYPOINT ["/bin/bash", "-c", "/usr/local/bin/cleanup-chrome && supervisord -n -c /etc/supervisor/supervisord.conf"]
