@@ -93,6 +93,6 @@ COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 # Add dbus service to supervisord config
 RUN echo "[program:dbus]\ncommand=/usr/bin/dbus-daemon --system --nofork\nautorestart=true\npriority=1\nstartretries=3\nstartsecs=3" >> /etc/supervisor/conf.d/supervisord.conf
 
-EXPOSE 7788 6080 5901
+EXPOSE 7789 6081 5902 9223
 
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
