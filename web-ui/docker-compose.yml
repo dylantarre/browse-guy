@@ -12,7 +12,7 @@ services:
         hard: 65536
     ports:
       - "7789:7789"  # FastAPI port
-      - "6080:6080"  # noVNC web interface
+      - "6081:6081"  # noVNC web interface
       - "5901:5901"  # VNC port
       - "9223:9223"  # Chrome remote debugging port
     environment:
