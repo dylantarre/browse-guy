@@ -13,7 +13,7 @@ services:
     ports:
       - "7789:7789"  # FastAPI port
       - "6081:6081"  # noVNC web interface
-      - "5901:5901"  # VNC port
+      - "5902:5902"  # VNC port
       - "9223:9223"  # Chrome remote debugging port
     environment:
       - OPENAI_ENDPOINT=${OPENAI_ENDPOINT:-https://api.openai.com/v1}
@@ -53,7 +53,7 @@ services:
     tmpfs:
       - /tmp
     healthcheck:
-      test: ["CMD", "nc", "-z", "localhost", "5901"]
+      test: ["CMD", "nc", "-z", "localhost", "5902"]
       interval: 10s
       timeout: 5s
       retries: 3
