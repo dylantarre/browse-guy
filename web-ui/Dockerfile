@@ -82,6 +82,10 @@ ENV CHROME_PERSISTENT_SESSION=true
 ENV RESOLUTION_WIDTH=1920
 ENV RESOLUTION_HEIGHT=1080
 
+# Set up Chrome profile directory
+RUN mkdir -p /root/.config/chromium && \
+    chmod -R 777 /root/.config/chromium
+
 # Set up supervisor configuration
 RUN mkdir -p /var/log/supervisor
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
