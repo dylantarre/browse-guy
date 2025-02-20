@@ -1,0 +1,18 @@
+name: Portainer Deploy
+
+on:
+  push:
+    branches:
+      - main  # or your default branch name
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Portainer Webhook
+        run: |
+          curl -X POST https://port.lg.media/api/stacks/webhooks/cd4fe10c-2546-4710-85ae-7c5b65da6e73
+        
+      - name: Verify Deployment
+        run: |
+          echo "Portainer webhook triggered successfully"
