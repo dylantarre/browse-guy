@@ -83,8 +83,13 @@ ENV RESOLUTION_WIDTH=1920
 ENV RESOLUTION_HEIGHT=1080
 
 # Set up Chrome profile directory
-RUN mkdir -p /root/.config/chromium && \
-    chmod -R 777 /root/.config/chromium
+RUN rm -rf /root/.config/chromium /root/.cache/chromium /tmp/chrome* && \
+    mkdir -p /root/.config/chromium && \
+    chmod -R 777 /root/.config/chromium && \
+    mkdir -p /root/.cache/chromium && \
+    chmod -R 777 /root/.cache/chromium && \
+    mkdir -p /app/data/chrome_data && \
+    chmod -R 777 /app/data/chrome_data
 
 # Set up supervisor configuration
 RUN mkdir -p /var/log/supervisor
