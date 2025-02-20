@@ -27,6 +27,7 @@ RUN apt-get update && apt-get install -y \
     xdg-utils \
     fonts-liberation \
     dbus \
+    dbus-x11 \
     xauth \
     xvfb \
     x11vnc \
@@ -41,6 +42,10 @@ RUN apt-get update && apt-get install -y \
     fonts-dejavu-core \
     fonts-dejavu-extra \
     && rm -rf /var/lib/apt/lists/*
+
+# Configure dbus
+RUN mkdir -p /var/run/dbus && \
+    dbus-uuidgen > /var/lib/dbus/machine-id
 
 # Install noVNC
 RUN git clone https://github.com/novnc/noVNC.git /opt/novnc \
@@ -80,6 +85,9 @@ ENV RESOLUTION_HEIGHT=1080
 # Set up supervisor configuration
 RUN mkdir -p /var/log/supervisor
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
+# Add dbus service to supervisord config
+RUN echo "[program:dbus]\ncommand=/usr/bin/dbus-daemon --system --nofork\nautorestart=true\npriority=1\nstartretries=3\nstartsecs=3" >> /etc/supervisor/conf.d/supervisord.conf
 
 EXPOSE 7788 6080 5901
 
