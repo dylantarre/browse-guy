@@ -43,9 +43,26 @@ RUN apt-get update && apt-get install -y \
     fonts-dejavu-extra \
     && rm -rf /var/lib/apt/lists/*
 
-# Configure dbus
-RUN mkdir -p /var/run/dbus && \
-    dbus-uuidgen > /var/lib/dbus/machine-id
+# Install D-Bus and configure it
+RUN apt-get update && apt-get install -y \
+    dbus \
+    && rm -rf /var/lib/apt/lists/* \
+    && mkdir -p /var/run/dbus \
+    && dbus-uuidgen > /var/lib/dbus/machine-id
+
+# Add D-Bus configuration
+RUN mkdir -p /etc/dbus-1/system.d && \
+    echo '<!DOCTYPE busconfig PUBLIC "-//freedesktop//DTD D-BUS Bus Configuration 1.0//EN" \
+    "http://www.freedesktop.org/standards/dbus/1.0/busconfig.dtd"> \
+    <busconfig> \
+    <type>system</type> \
+    <allow_anonymous/> \
+    <policy context="default"> \
+    <allow send_destination="*" eavesdrop="true"/> \
+    <allow eavesdrop="true"/> \
+    <allow own="*"/> \
+    </policy> \
+    </busconfig>' > /etc/dbus-1/system.conf
 
 # Install noVNC
 RUN git clone https://github.com/novnc/noVNC.git /opt/novnc \
@@ -99,10 +116,10 @@ COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 RUN echo "[program:dbus]\ncommand=/usr/bin/dbus-daemon --system --nofork\nautorestart=true\npriority=1\nstartretries=3\nstartsecs=3" >> /etc/supervisor/conf.d/supervisord.conf
 
 # Add cleanup script
-RUN echo '#!/bin/bash\npkill -9 -f chrome || true\nrm -rf /tmp/chrome*\nrm -rf ~/.config/chromium\nrm -rf ~/.cache/chromium\nrm -f /tmp/.X*-lock\nrm -f /tmp/.X11-unix/X*' > /usr/local/bin/cleanup-chrome && \
+RUN echo '#!/bin/bash\npkill -9 -f chrome || true\nrm -rf /tmp/chrome*\nrm -rf ~/.config/chromium\nrm -rf ~/.cache/chromium\nrm -f /tmp/.X*-lock\nrm -f /tmp/.X11-unix/X*\ndbus-uuidgen > /var/lib/dbus/machine-id\nmkdir -p /var/run/dbus\ndbus-daemon --system --fork' > /usr/local/bin/cleanup-chrome && \
     chmod +x /usr/local/bin/cleanup-chrome
 
 EXPOSE 7789 6081 5902 9223
 
-# Run cleanup on container start
+# Run cleanup and start supervisord
 ENTRYPOINT ["/bin/bash", "-c", "/usr/local/bin/cleanup-chrome && supervisord -n -c /etc/supervisor/supervisord.conf"]
