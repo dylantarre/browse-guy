@@ -14,7 +14,7 @@ services:
       - "7788:7788"  # Gradio default port
       - "6080:6080"  # noVNC web interface
       - "5901:5901"  # VNC port
-      - "9222:9222"  # Chrome remote debugging port
+      - "9223:9223"  # Chrome remote debugging port
     environment:
       - OPENAI_ENDPOINT=${OPENAI_ENDPOINT:-https://api.openai.com/v1}
       - OPENAI_API_KEY=${OPENAI_API_KEY:-}
@@ -35,7 +35,7 @@ services:
       - RESOLUTION_WIDTH=${RESOLUTION_WIDTH:-1920}
       - RESOLUTION_HEIGHT=${RESOLUTION_HEIGHT:-1080}
       - VNC_PASSWORD=${VNC_PASSWORD:-vncpassword}
-      - CHROME_DEBUGGING_PORT=9222
+      - CHROME_DEBUGGING_PORT=9223
       - CHROME_DEBUGGING_HOST=localhost
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix
